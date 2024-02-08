@@ -67,10 +67,10 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <nav>
-          <HeaderComponent />
-        </nav>
         <Suspense fallback={<Loading />}>
+          <nav>
+            <HeaderComponent />
+          </nav>
           <main>{children}</main>
         </Suspense>
         <Toaster />
