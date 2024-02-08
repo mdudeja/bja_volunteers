@@ -111,7 +111,7 @@ export default function GenerateLinksComponent({
       const data =
         generatingFor === "state" ? await getAllStates() : await getAllPCs()
       setList(
-        Array.from(new Set(data[0].data.map((item) => item.toLowerCase())))
+        Array.from(new Set(data[0]?.data.map((item) => item.toLowerCase())))
       )
     }
 

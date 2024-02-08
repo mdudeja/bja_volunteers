@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
     loggedInUser = await verifyToken(token)
   }
 
-  if (!loggedInUser || !loggedInUser._id) {
+  if (!loggedInUser || !loggedInUser.username) {
     return NextResponse.json(
       {
         status: 401,

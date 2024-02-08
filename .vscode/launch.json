@@ -6,7 +6,7 @@
       "type": "node",
       "request": "launch",
       "runtimeExecutable": "${workspaceFolder}/node_modules/next/dist/bin/next",
-      "runtimeArgs": ["dev"],
+      "runtimeArgs": ["dev", "-p", "3004"],
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}"
     },
@@ -16,7 +16,7 @@
       "request": "launch",
       "runtimeExecutable": "/usr/bin/brave-browser",
       "runtimeArgs": ["--remote-debugging-port=9222"],
-      "url": "http://localhost:3000",
+      "url": "http://localhost:3004",
       "webRoot": "${workspaceFolder}"
     }
   ],

@@ -2,16 +2,16 @@ import { fetchToken } from "@/lib/controllers/AccessTokenController"
 
 export default async function verifyToken(tokenText?: string) {
   if (!tokenText) {
-    return {}
+    return
   }
   const token = await fetchToken(tokenText ?? "")
 
   if (!token) {
-    return {}
+    return
   }
 
   if (!token.is_active) {
-    return {}
+    return
   }
 
   const user = {

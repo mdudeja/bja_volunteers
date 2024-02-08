@@ -31,7 +31,7 @@ async function dbConnect() {
 
     let url = `mongodb://${cluster_url}`
     if (username.length) {
-      url = `mongodb+srv://${username}:${password}@${cluster_url}/?authMechanism=${authMechanism}&retryWrites=true&w=majority`
+      url = `mongodb+srv://${username}:${password}@${cluster_url}?authMechanism=${authMechanism}&retryWrites=true&w=majority`
     }
 
     const opts = {

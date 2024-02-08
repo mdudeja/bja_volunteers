@@ -10,8 +10,6 @@ import Loading from "@/app/loading"
 const inter = Inter({ subsets: ["latin"] })
 
 export async function generateMetadata(): Promise<Metadata> {
-  const session = await getSession()
-
   const metadata: Metadata = {
     metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? ""),
     title: "BJA Volunteers",
@@ -34,28 +32,6 @@ export async function generateMetadata(): Promise<Metadata> {
       ],
     },
   }
-
-  if (session?.user?.type === "user") {
-    if (session.user.access.states.length > 0) {
-      metadata.title = session.user.access.states.join(", ") + " BJA Volunteers"
-      metadata.description = `Volunteer management for the BJA in ${session.user.access.states.join(
-        ", "
-      )}`
-    }
-
-    if (session.user.access.pcs.length > 0) {
-      metadata.title = session.user.access.pcs.join(", ") + " BJA Volunteers"
-      metadata.description = `Volunteer management for the BJA in ${session.user.access.pcs.join(
-        ", "
-      )}`
-    }
-
-    if (metadata.openGraph) {
-      metadata.openGraph.title = metadata.title as string
-      metadata.openGraph.description = metadata.description as string
-    }
-  }
-
   return metadata
 }
 

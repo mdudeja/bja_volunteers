@@ -15,6 +15,8 @@ import WorkDetailsComponent from "@/components/WorkDetailsComponent"
 import { work_details_table_headers } from "@/lib/Constants"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
+import { Metadata, ResolvingMetadata } from "next"
+import verifyToken from "@/app/actions/verifyToken"
 
 async function getContacts(user: SessionData["user"]) {
   if (user?.type === "admin") {
@@ -84,4 +86,71 @@ export default async function DashboardPage() {
       </ResizablePanelGroup>
     </div>
   )
+}
+
+type Props = {
+  params: { id: string }
+  searchParams: { [key: string]: string | string[] | undefined }
+}
+
+export async function generateMetadata(
+  { params, searchParams }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const metadata: Metadata = {
+    metadataBase: new URL(process.env.NEXT_PUBLIC_URL ?? ""),
+    title: "BJA Volunteers",
+    description: "Volunteer management for the BJA",
+    icons: {
+      icon: `/images/logo_filled.jpg`,
+    },
+    openGraph: {
+      type: "website",
+      url: `${process.env.NEXT_PUBLIC_URL}/`,
+      title: "BJA Volunteers",
+      description: "Volunteer management for the BJA",
+      images: [
+        {
+          url: `/images/logo_filled.jpg`,
+          width: 400,
+          height: 400,
+          alt: "BJA Volunteers",
+        },
+      ],
+    },
+  }
+
+  if (!searchParams) {
+    return metadata
+  }
+
+  const token = searchParams?.token as string
+
+  const tokenDetails = await verifyToken(token)
+
+  if (tokenDetails?._id) {
+    if (tokenDetails.type === "user") {
+      if (tokenDetails.access.states.length > 0) {
+        metadata.title =
+          tokenDetails.access.states.join(", ") + " BJA Volunteers"
+        metadata.description = `Volunteer management for the BJA in ${tokenDetails.access.states.join(
+          ", "
+        )}`
+      }
+
+      if (tokenDetails.access.pcs.length > 0) {
+        metadata.title = tokenDetails.access.pcs.join(", ") + " BJA Volunteers"
+        metadata.description = `Volunteer management for the BJA in ${tokenDetails.access.pcs.join(
+          ", "
+        )}`
+      }
+
+      if (metadata.openGraph) {
+        metadata.openGraph.title = metadata.title as string
+        metadata.openGraph.description = metadata.description as string
+      }
+    }
+  }
+
+  return metadata
 }
