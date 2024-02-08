@@ -4,18 +4,12 @@ import "./globals.css"
 import HeaderComponent from "@/components/HeaderComponent"
 import { Toaster } from "@/components/ui/sonner"
 import { getSession } from "@/lib/getSession"
+import { Suspense } from "react"
+import Loading from "@/app/loading"
 
 const inter = Inter({ subsets: ["latin"] })
 
-type Props = {
-  params: { id: string }
-  searchParams: { [key: string]: string | string[] | undefined }
-}
-
-export async function generateMetadata(
-  { params, searchParams }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata(): Promise<Metadata> {
   const session = await getSession()
 
   const metadata: Metadata = {
@@ -76,7 +70,9 @@ export default function RootLayout({
         <nav>
           <HeaderComponent />
         </nav>
-        <main>{children}</main>
+        <Suspense fallback={<Loading />}>
+          <main>{children}</main>
+        </Suspense>
         <Toaster />
       </body>
     </html>

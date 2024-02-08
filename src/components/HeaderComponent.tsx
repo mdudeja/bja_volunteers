@@ -26,7 +26,7 @@ export default function HeaderComponent() {
     } else {
       setShowLogout(false)
     }
-  }, [session, showLogout, token])
+  }, [session, showLogout, token, loginWithToken])
 
   return (
     <Menubar className="flex flex-row max-w-full">

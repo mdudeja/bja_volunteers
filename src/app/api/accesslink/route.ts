@@ -64,8 +64,8 @@ export async function POST(request: NextRequest) {
 }
 
 export async function GET(request: NextRequest) {
-  const userLoggedIn = await getIsUserLoggedIn(request.cookies as any)
-  const isAdmin = await getIsUserAdmin(request.cookies as any)
+  const userLoggedIn = await getIsUserLoggedIn()
+  const isAdmin = await getIsUserAdmin()
 
   if (!userLoggedIn || !isAdmin) {
     return NextResponse.json(

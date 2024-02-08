@@ -18,5 +18,5 @@ export default function Home() {
     } else {
       router.push("/login")
     }
-  }, [session])
+  }, [session, router])
 }
