@@ -1,18 +1,24 @@
-import { defaultSession, sessionOptions } from "@/lib/AppSessionOptions"
+import { getIsUserLoggedIn, getSession } from "@/lib/getSession"
+import { defaultSession } from "@/lib/AppSessionOptions"
 import { loginUser } from "@/lib/controllers/UserController"
-import { SessionData } from "@/lib/interfaces/SessionData"
-import { getIronSession } from "iron-session"
-import { cookies } from "next/headers"
 import { NextRequest, NextResponse } from "next/server"
+import verifyToken from "@/app/actions/verifyToken"
 
 export async function POST(request: NextRequest) {
-  const session = await getIronSession<SessionData>(cookies(), sessionOptions)
+  const session = await getSession()
+  let loggedInUser: any
 
-  const { username, password } = await request.json()
+  const { username, password, token } = await request.json()
 
-  const loggedInUser = await loginUser(username, password)
+  if (username && password) {
+    loggedInUser = await loginUser(username, password)
+  }
 
-  if (!loggedInUser) {
+  if (token) {
+    loggedInUser = await verifyToken(token)
+  }
+
+  if (!loggedInUser || !loggedInUser._id) {
     return NextResponse.json(
       {
         status: 401,
@@ -33,20 +39,21 @@ export async function POST(request: NextRequest) {
   return NextResponse.json(session)
 }
 
-export async function GET() {
-  const session = await getIronSession<SessionData>(cookies(), sessionOptions)
+export async function GET(req: NextRequest) {
+  const session = await getSession()
+  const userLoggedIn = await getIsUserLoggedIn()
 
-  if (!session.isLoggedIn || !session.user || !session.user.isActive) {
-    return Response.json(defaultSession)
+  if (!userLoggedIn) {
+    return NextResponse.json(defaultSession)
   }
 
-  return Response.json(session)
+  return NextResponse.json(session)
 }
 
 export async function DELETE() {
-  const session = await getIronSession<SessionData>(cookies(), sessionOptions)
+  const session = await getSession()
 
   session.destroy()
 
-  return Response.json(defaultSession)
+  return NextResponse.json(defaultSession)
 }

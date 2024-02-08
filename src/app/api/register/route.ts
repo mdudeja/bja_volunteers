@@ -4,17 +4,34 @@ import {
   fetchUserByUsername,
 } from "@/lib/controllers/UserController"
 import { TUser } from "@/lib/interfaces/User"
+import { getIsUserAdmin, getIsUserLoggedIn } from "@/lib/getSession"
 
 export async function POST(request: NextRequest) {
+  const userLoggedIn = await getIsUserLoggedIn()
+  const isAdmin = await getIsUserAdmin()
   const user: TUser = await request.json()
+
+  if (!userLoggedIn || !isAdmin) {
+    return NextResponse.json(
+      {
+        error: "Unauthorized",
+      },
+      {
+        status: 401,
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+  }
 
   const exists = await fetchUserByUsername(user.username)
 
   if (exists) {
     return NextResponse.json(
-      JSON.stringify({
+      {
         error: "User already exists",
-      }),
+      },
       {
         status: 400,
         headers: {
@@ -28,9 +45,9 @@ export async function POST(request: NextRequest) {
 
   if (!newUser) {
     return NextResponse.json(
-      JSON.stringify({
+      {
         error: "Failed to create user",
-      }),
+      },
       {
         status: 500,
         headers: {
@@ -40,11 +57,11 @@ export async function POST(request: NextRequest) {
     )
   }
 
-  return new Response(
-    JSON.stringify({
-      id: newUser.id,
+  return NextResponse.json(
+    {
+      id: newUser._id,
       username: newUser.username,
-    }),
+    },
     {
       status: 200,
       headers: {

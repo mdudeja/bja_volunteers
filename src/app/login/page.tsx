@@ -3,7 +3,7 @@
 import FormComponent from "@/components/FormComponent"
 import useSession from "@/lib/hooks/use-session"
 import { TLogin, loginSchema } from "@/lib/interfaces/Auth"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
@@ -13,6 +13,7 @@ export default function LoginPage() {
     null
   )
   const router = useRouter()
+  const searchParams = useSearchParams()
 
   async function onSubmit(values?: TLogin) {
     if (!values) {
@@ -27,6 +28,12 @@ export default function LoginPage() {
     setLoadingToastId(null)
 
     if (res.user && res.user.username.length && res.isLoggedIn) {
+      const redirect = searchParams.get("redirect")
+      if (redirect) {
+        router.push(redirect)
+        return
+      }
+
       router.push("/dashboard")
       return
     }
@@ -41,6 +48,7 @@ export default function LoginPage() {
           formSchema={loginSchema}
           onSubmit={onSubmit}
           disableSubmit={loadingToastId !== null}
+          defaultValues={{ username: "", password: "" }}
           formFields={[
             {
               name: "username",

@@ -90,7 +90,6 @@ export const updateUser = async (user: Partial<TUser>): Promise<boolean> => {
       { username: user.username },
       {
         ...user,
-        updatedAt: Date.now(),
       }
     ).exec()
     return true

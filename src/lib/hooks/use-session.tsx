@@ -30,6 +30,13 @@ function doLogin(
   })
 }
 
+function doLoginWithToken(url: string, { arg }: { arg: { token: string } }) {
+  return fetchJson<SessionData>(url, {
+    method: "POST",
+    body: JSON.stringify({ token: arg.token }),
+  })
+}
+
 function doLogout(url: string) {
   return fetchJson<SessionData>(url, {
     method: "DELETE",
@@ -46,10 +53,18 @@ export default function useSession() {
   )
 
   const { trigger: login } = useSWRMutation(sessionApiUrl, doLogin, {
-    revalidate: false,
+    revalidate: true,
   })
 
   const { trigger: logout } = useSWRMutation(sessionApiUrl, doLogout)
 
-  return { session, login, logout, isLoading }
+  const { trigger: loginWithToken } = useSWRMutation(
+    sessionApiUrl,
+    doLoginWithToken,
+    {
+      revalidate: true,
+    }
+  )
+
+  return { session, login, logout, loginWithToken, isLoading }
 }
