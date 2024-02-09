@@ -6,6 +6,7 @@ import { Toaster } from "@/components/ui/sonner"
 import { getSession } from "@/lib/getSession"
 import { Suspense } from "react"
 import Loading from "@/app/loading"
+import Providers from "./providers"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -47,7 +48,9 @@ export default function RootLayout({
           <nav>
             <HeaderComponent />
           </nav>
-          <main>{children}</main>
+          <main>
+            <Providers>{children}</Providers>
+          </main>
         </Suspense>
         <Toaster />
       </body>

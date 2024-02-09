@@ -137,7 +137,7 @@ export default function MultiSelectCombobox({
               <CommandInput placeholder={`Select ${prompt}(s)...`} />
               <CommandEmpty>{`No ${prompt}s found`}</CommandEmpty>
               <ScrollArea className="h-96">
-                <CommandGroup>
+                <CommandGroup className="h-full overflow-y-auto">
                   {data.map((item, idx) => {
                     return (
                       <CommandItem
