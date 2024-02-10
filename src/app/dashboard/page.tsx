@@ -61,9 +61,6 @@ export default async function DashboardPage() {
         </ResizablePanel>
         <ResizableHandle withHandle />
         <ResizablePanel defaultSize={60}>
-          <p className="text-lg mx-4 mt-2 underline underline-offset-4">
-            Volunteers
-          </p>
           <HydrationBoundary state={dehydrate(queryClient)}>
             <DashboardVolunteersView />
           </HydrationBoundary>

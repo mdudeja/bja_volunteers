@@ -7,24 +7,25 @@ import { Button } from "@/components/ui/button"
 import { useRouter } from "next/navigation"
 import { AppContactType } from "@/lib/interfaces/AppContact"
 import Link from "next/link"
+
 import VolunteersComponent from "./VolunteersComponent"
 
 export default function DashboardVolunteersView() {
   const router = useRouter()
 
   return (
-    <div className="h-full flex flex-col place-items-center">
-      <Suspense fallback={<Loading />}>
-        <VolunteersComponent rowsPerPage={10} currentPage={1} minified={true} />
-      </Suspense>
-      <div className="flex flex-row items-center justify-end self-end me-4 mt-1 mb-2 space-x-2">
-        <Button variant="default" size="sm">
-          <Link href="/work-details">View Work Details</Link>
-        </Button>
-        <Button variant="default" size="sm">
+    <div className="h-full w-full flex flex-col">
+      <div className="flex flex-row w-full items-center justify-between">
+        <p className="text-lg mx-4 mt-2 underline underline-offset-4">
+          Volunteers
+        </p>
+        <Button variant="default" size="sm" className="self-end me-4 mt-2">
           <Link href="/volunteers">View All</Link>
         </Button>
       </div>
+      <Suspense fallback={<Loading />}>
+        <VolunteersComponent rowsPerPage={10} currentPage={1} minified={true} />
+      </Suspense>
     </div>
   )
 }

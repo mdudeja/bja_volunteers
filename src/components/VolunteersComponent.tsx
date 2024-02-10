@@ -85,7 +85,7 @@ export default function VolunteersComponent({
   }
 
   return (
-    <ScrollArea className="h-5/6 w-full">
+    <ScrollArea className="w-full">
       <TableComponent
         data={data?.contacts as AppContactType[]}
         tableHeaders={vol_table_headers}

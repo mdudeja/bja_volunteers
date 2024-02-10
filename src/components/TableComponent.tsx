@@ -136,8 +136,12 @@ export default function TableComponent({
       return []
     }
 
-    const start = (currentPage - 1) * rowsPerPage
+    const start =
+      tableState.filterCriteria.length && tableState.filterValue.length
+        ? 0
+        : (currentPage - 1) * rowsPerPage
     const end = start + rowsPerPage
+
     return rows.slice(start, end)
   }
 
@@ -184,10 +188,6 @@ export default function TableComponent({
     })
 
     dispatch({ type: "rows", payload: filteredRows ?? [] })
-
-    return () => {
-      dispatch({ type: "effect", payload: "" })
-    }
   }, [
     data,
     tableState.filterCriteria,

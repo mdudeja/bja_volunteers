@@ -1,10 +1,18 @@
 "use client"
 
-import { Menubar, MenubarMenu, MenubarTrigger } from "@/components/ui/menubar"
+import {
+  Menubar,
+  MenubarMenu,
+  MenubarTrigger,
+  MenubarContent,
+  MenubarItem,
+} from "@/components/ui/menubar"
 import useSession from "@/lib/hooks/use-session"
 import Image from "next/image"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
+import { MoreVertical } from "lucide-react"
+import Link from "next/link"
 
 export default function HeaderComponent() {
   const pathname = usePathname()
@@ -55,6 +63,25 @@ export default function HeaderComponent() {
             {showLogout ? "Logout" : "Login"}
           </MenubarTrigger>
         )}
+        <MenubarTrigger className="cursor-pointer">
+          <MoreVertical />
+          <MenubarContent>
+            <MenubarItem>
+              <Link href="/dashboard">Home</Link>
+            </MenubarItem>
+            <MenubarItem>
+              <Link href="/volunteers">Volunteers</Link>
+            </MenubarItem>
+            <MenubarItem>
+              <Link href="/work-details">Work Details</Link>
+            </MenubarItem>
+            {session && session.user.type === "admin" && (
+              <MenubarItem>
+                <Link href="/dashboard">Generate Links</Link>
+              </MenubarItem>
+            )}
+          </MenubarContent>
+        </MenubarTrigger>
       </MenubarMenu>
     </Menubar>
   )

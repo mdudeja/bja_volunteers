@@ -128,20 +128,41 @@ export default function GenerateLinksComponent({
 
   return (
     <Suspense fallback={<Loading />}>
-      <div className="h-full w-full relative">
-        <div className="flex flex-col space-y-2 px-2 pt-2 h-5/6">
+      <div className="h-full w-full relative pb-2">
+        <div className="flex flex-col space-y-2 px-2 pt-2 h-full">
           <div className="flex flex-col items-start md:flex-row md:items-center md:justify-between">
             <p className="text-lg underline underline-offset-4">
               Generate Links
             </p>
-            <div className="flex items-center space-x-2">
-              <Label htmlFor="generate_for">State</Label>
-              <Switch
-                id="generate_for"
-                checked={generatingFor === "pc"}
-                onCheckedChange={onSwitchChange}
-              />
-              <Label htmlFor="generate_for">PC</Label>
+            <div className="flex flex-row items-center justify-center space-x-2">
+              <div className="flex items-center space-x-2">
+                <Label htmlFor="generate_for">State</Label>
+                <Switch
+                  id="generate_for"
+                  checked={generatingFor === "pc"}
+                  onCheckedChange={onSwitchChange}
+                />
+                <Label htmlFor="generate_for">PC</Label>
+              </div>
+              {minified && (
+                <Button
+                  variant="default"
+                  onClick={(e) => router.push("/generatelinks")}
+                >
+                  View All
+                </Button>
+              )}
+              <Button
+                disabled={selectedValues.length === 0}
+                onClick={() =>
+                  mutationAdd.mutate({
+                    target: generatingFor,
+                    value: selectedValues,
+                  })
+                }
+              >
+                Generate
+              </Button>
             </div>
           </div>
           {list.length > 0 && (
@@ -170,28 +191,6 @@ export default function GenerateLinksComponent({
               }
             />
           </ScrollArea>
-        </div>
-        <div className="flex justify-end me-2 pt-2 space-x-2">
-          <Button
-            disabled={selectedValues.length === 0}
-            onClick={() =>
-              mutationAdd.mutate({
-                target: generatingFor,
-                value: selectedValues,
-              })
-            }
-          >
-            Generate
-          </Button>
-          {minified && (
-            <Button
-              variant="default"
-              className="mb-4"
-              onClick={(e) => router.push("/generatelinks")}
-            >
-              View All
-            </Button>
-          )}
         </div>
       </div>
     </Suspense>
