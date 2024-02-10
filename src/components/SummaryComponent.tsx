@@ -92,7 +92,7 @@ export default function SummaryComponent({ minified }: { minified: boolean }) {
     if (session?.user) {
       refetch()
     }
-  }, [session?.user])
+  }, [session?.user, refetch])
 
   useEffect(() => {
     if (error) {

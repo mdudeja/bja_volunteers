@@ -73,7 +73,7 @@ export default function WorkDetailsComponent({
     if (session?.user) {
       refetch()
     }
-  }, [session?.user])
+  }, [session?.user, refetch])
 
   useEffect(() => {
     if (error) {
@@ -81,7 +81,7 @@ export default function WorkDetailsComponent({
     }
   }, [error])
 
-  if (isFetching || error || data.totalWorkDetails === 0) {
+  if (isFetching || error || data.totalWorkDetails === 0 || deactivateRefresh) {
     return <TableSkeletonComponent />
   }
 

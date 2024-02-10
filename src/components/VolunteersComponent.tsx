@@ -72,7 +72,7 @@ export default function VolunteersComponent({
     if (session?.user) {
       refetch()
     }
-  }, [session?.user])
+  }, [session?.user, refetch])
 
   useEffect(() => {
     if (error) {
@@ -80,7 +80,7 @@ export default function VolunteersComponent({
     }
   }, [error])
 
-  if (isFetching || error || data.totalContacts === 0) {
+  if (isFetching || error || data.totalContacts === 0 || deactivateRefresh) {
     return <TableSkeletonComponent />
   }
 
