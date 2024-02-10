@@ -24,6 +24,7 @@ export const work_details_table_headers = [
   "voters_enrolled",
   "enrollment_quiz_status",
   "volunteer_quiz_status",
+  "last_message_at",
 ]
 
 export const common_table_filters_active = [
