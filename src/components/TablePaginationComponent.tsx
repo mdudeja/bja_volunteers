@@ -7,6 +7,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { usePathname } from "next/navigation"
 
 export default function TablePaginationComponent({
   currentPage,
@@ -19,6 +20,8 @@ export default function TablePaginationComponent({
   rowsPerPage: number
   islastPage: boolean
 }) {
+  const pathname = usePathname()
+
   const getPaginationLinks = () => {
     const links = []
     const start = Math.max(2, currentPage - 2)
@@ -26,7 +29,7 @@ export default function TablePaginationComponent({
     for (let i = start; i <= end; i++) {
       links.push(
         <PaginationItem key={i}>
-          <PaginationLink href={`/volunteers?page=${i}`}>{i}</PaginationLink>
+          <PaginationLink href={`${pathname}?page=${i}`}>{i}</PaginationLink>
         </PaginationItem>
       )
     }

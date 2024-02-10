@@ -63,6 +63,8 @@ export default function HeaderComponent() {
             {showLogout ? "Logout" : "Login"}
           </MenubarTrigger>
         )}
+      </MenubarMenu>
+      <MenubarMenu>
         <MenubarTrigger className="cursor-pointer">
           <MoreVertical />
           <MenubarContent>

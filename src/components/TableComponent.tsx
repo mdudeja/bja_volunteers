@@ -25,6 +25,8 @@ const numericHeaders = [
   "last_message_at",
   "optin_time",
   "created_at",
+  "houses_visited",
+  "voters_enrolled",
 ]
 const numericOperands = ["<", ">", "<=", ">=", "="]
 const actionHeaders = ["actions"]
@@ -216,7 +218,7 @@ export default function TableComponent({
                 Refresh Data
               </Button>
             )}
-            <div className="flex flex-row items-start md:items-center md:justify-between space-x-2">
+            <div className="flex flex-row items-start justify-center space-x-2">
               <TableFilterComponent
                 columnDetails={tableHeaders.map((h) => {
                   return {

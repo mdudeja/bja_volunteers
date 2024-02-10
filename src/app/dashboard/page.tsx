@@ -8,8 +8,6 @@ import GenerateLinksComponent from "@/components/GenerateLinksComponent"
 import { getSession } from "@/lib/getSession"
 import SummaryComponent from "@/components/SummaryComponent"
 import WorkDetailsComponent from "@/components/WorkDetailsComponent"
-import { Button } from "@/components/ui/button"
-import Link from "next/link"
 import { Metadata, ResolvingMetadata } from "next"
 import verifyToken from "@/app/actions/verifyToken"
 import {

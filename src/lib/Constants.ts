@@ -25,3 +25,17 @@ export const work_details_table_headers = [
   "enrollment_quiz_status",
   "volunteer_quiz_status",
 ]
+
+export const common_table_filters_active = [
+  "Active Today",
+  "Active in last 3 days",
+  "Active in last 7 days",
+  "Active in last 30 days",
+]
+
+export const common_table_filters_inactive = [
+  "Inactive Today",
+  "Inactive in last 3 days",
+  "Inactive in last 7 days",
+  "Inactive in last 30 days",
+]
