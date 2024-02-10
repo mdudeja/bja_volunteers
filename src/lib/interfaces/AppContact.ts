@@ -19,6 +19,7 @@ export type AppContactType = {
 }
 
 export type AppContactWorkDetailsType = {
+  volunteer_name: string
   wa_name: string | null
   phone: string
   state?: string
@@ -26,4 +27,5 @@ export type AppContactWorkDetailsType = {
   voters_enrolled?: string
   enrollment_quiz_status?: string
   volunteer_quiz_status?: string
+  last_message_at: Date | null
 }

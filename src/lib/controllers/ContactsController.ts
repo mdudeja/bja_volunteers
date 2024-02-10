@@ -275,8 +275,10 @@ export const getAllPCsFromDB = async (): Promise<
 
 const convertWorkDetails = (contact: TBQContact): AppContactWorkDetailsType => {
   const base: AppContactWorkDetailsType = {
+    volunteer_name: contact.fields.find((f) => f.label === "Name")?.value || "",
     wa_name: contact.name,
     phone: contact.phone,
+    last_message_at: contact.last_message_at?.value || null,
   }
 
   for (const label in labelToAppWorkDetailsProps) {

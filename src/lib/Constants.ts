@@ -16,6 +16,7 @@ export const vol_table_headers = [
 ]
 
 export const work_details_table_headers = [
+  "volunteer_name",
   "wa_name",
   "phone",
   "state",

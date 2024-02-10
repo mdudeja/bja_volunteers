@@ -138,10 +138,11 @@ export default function TableComponent({
       return []
     }
 
-    const start =
-      tableState.filterCriteria.length && tableState.filterValue.length
-        ? 0
-        : (currentPage - 1) * rowsPerPage
+    if (tableState.filterCriteria.length && tableState.filterValue.length) {
+      return rows
+    }
+
+    const start = (currentPage - 1) * rowsPerPage
     const end = start + rowsPerPage
 
     return rows.slice(start, end)
@@ -311,14 +312,16 @@ export default function TableComponent({
           </TableBody>
         </Table>
       )}
-      {!minified && (
-        <TablePaginationComponent
-          currentPage={currentPage}
-          totalRows={tableState.rows.length}
-          rowsPerPage={rowsPerPage}
-          islastPage={tableState.rows.length < rowsPerPage * currentPage}
-        />
-      )}
+      {!minified &&
+        !tableState.filterCriteria.length &&
+        !tableState.filterValue.length && (
+          <TablePaginationComponent
+            currentPage={currentPage}
+            totalRows={tableState.rows.length}
+            rowsPerPage={rowsPerPage}
+            islastPage={tableState.rows.length < rowsPerPage * currentPage}
+          />
+        )}
     </div>
   )
 }
