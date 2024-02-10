@@ -48,10 +48,12 @@ export default class BQController {
     query,
     onData,
     onEnd,
+    onError,
   }: {
     query: string
     onData: (row: TBQContact) => void
     onEnd: () => void
+    onError: (e: Error) => void
   }): Promise<void> {
     console.log("Starting Stream")
     this._activeJobs.push("stream")
@@ -61,10 +63,7 @@ export default class BQController {
         useLegacySql: false,
         query,
       })
-      .on("error", (e) => {
-        console.error(e)
-        this._activeJobs = this._activeJobs.filter((id) => id !== "stream")
-      })
+      .on("error", onError)
       .on("data", onData)
       .on("end", onEnd)
   }
@@ -113,27 +112,30 @@ export default class BQController {
     return query
   }
 
-  public async queryContacts(
-    state?: string[],
-    pc?: string[],
-    onComplete?: () => void | Promise<void>
-  ): Promise<any> {
+  public async queryContacts(state?: string[], pc?: string[]): Promise<any> {
     if (!this._client || this._activeJobs.length > 0) {
       return
     }
 
     const query = this._generateQueryText(state, pc)
 
-    return this._queryStream({
-      query,
-      onData: async (row) => {
-        await addRow(row)
-      },
-      onEnd: async () => {
-        console.log("Stream Done")
-        this._activeJobs = this._activeJobs.filter((id) => id !== "stream")
-        await onComplete?.()
-      },
+    return new Promise<void>((resolve, reject) => {
+      this._queryStream({
+        query,
+        onData: async (row) => {
+          await addRow(row)
+        },
+        onEnd: async () => {
+          console.log("Stream Done")
+          this._activeJobs = this._activeJobs.filter((id) => id !== "stream")
+          resolve()
+        },
+        onError: (e) => {
+          console.error(e.message)
+          this._activeJobs = this._activeJobs.filter((id) => id !== "stream")
+          reject(e)
+        },
+      })
     })
   }
 }

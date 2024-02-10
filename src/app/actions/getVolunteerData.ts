@@ -19,7 +19,7 @@ export default async function getVolunteerData(
     }
   }
 
-  if (!state && !pc && !isAdmin) {
+  if (!state?.length && !pc?.length && !isAdmin) {
     return {
       contacts: [],
       totalContacts: 0,

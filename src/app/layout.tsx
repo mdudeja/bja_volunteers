@@ -7,6 +7,18 @@ import { getSession } from "@/lib/getSession"
 import { Suspense } from "react"
 import Loading from "@/app/loading"
 import Providers from "./providers"
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query"
+import { SessionData } from "@/lib/interfaces/SessionData"
+import getAllPCs from "@/app/actions/getAllPcs"
+import getAllStates from "@/app/actions/getAllStates"
+import getExistingLinks from "@/app/actions/getExistingLinks"
+import getVolunteerData from "@/app/actions/getVolunteerData"
+import getWorkDetailsData from "@/app/actions/getWorkDetailsData"
+import { defaultSession } from "@/lib/AppSessionOptions"
 
 const inter = Inter({ subsets: ["latin"] })
 
@@ -36,11 +48,60 @@ export async function generateMetadata(): Promise<Metadata> {
   return metadata
 }
 
-export default function RootLayout({
+async function getContacts(user: SessionData["user"]) {
+  if (user?.type === "admin") {
+    return await getVolunteerData()
+  }
+
+  return await getVolunteerData(user?.access?.states, user?.access?.pcs)
+}
+
+async function getWorkDetails(user: SessionData["user"]) {
+  if (user?.type === "admin") {
+    return await getWorkDetailsData()
+  }
+
+  return await getWorkDetailsData(user?.access?.states, user?.access?.pcs)
+}
+
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode
 }>) {
+  const session = await getSession()
+  const sessionUser = session?.user as SessionData["user"]
+  const queryClient = new QueryClient()
+
+  await queryClient.prefetchQuery({
+    queryKey: ["volunteerData"],
+    queryFn: () => getContacts(sessionUser ?? undefined),
+    staleTime: sessionUser ? 1000 * 60 : 1000 * 1,
+  })
+
+  await queryClient.prefetchQuery({
+    queryKey: ["workDetailsData"],
+    queryFn: () => getWorkDetails(sessionUser ?? undefined),
+    staleTime: sessionUser ? 1000 * 60 : 1000 * 1,
+  })
+
+  if (sessionUser?.type === "admin") {
+    await queryClient.prefetchQuery({
+      queryKey: ["existingLinks"],
+      queryFn: () => getExistingLinks(),
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: ["statesList"],
+      queryFn: () => getAllStates(),
+    })
+
+    await queryClient.prefetchQuery({
+      queryKey: ["pcsList"],
+      queryFn: () => getAllPCs(),
+    })
+  }
+
   return (
     <html lang="en">
       <body className={inter.className}>
@@ -49,7 +110,11 @@ export default function RootLayout({
             <HeaderComponent />
           </nav>
           <main>
-            <Providers>{children}</Providers>
+            <Providers>
+              <HydrationBoundary state={dehydrate(queryClient)}>
+                {children}
+              </HydrationBoundary>
+            </Providers>
           </main>
         </Suspense>
         <Toaster />

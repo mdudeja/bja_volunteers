@@ -67,7 +67,6 @@ type tableStateType = {
   filterValue: string
   filterOperand: string
   rows: { [key: string]: string }[]
-  isRefreshing: boolean
 }
 
 export default function TableComponent({
@@ -79,6 +78,7 @@ export default function TableComponent({
   onRefresh,
   onDelete,
   hideRefresh = false,
+  deactivateRefresh = false,
   truncateLongStrings = false,
 }: {
   tableHeaders: string[]
@@ -86,15 +86,16 @@ export default function TableComponent({
   minified?: boolean
   rowsPerPage?: number
   currentPage?: number
-  onRefresh?: () => Promise<void>
+  onRefresh?: () => void
   onDelete?: (index: number) => void
   hideRefresh?: boolean
+  deactivateRefresh?: boolean
   truncateLongStrings?: boolean
 }) {
   function tableReducer(
     tstate: tableStateType,
     action: {
-      type: "criteria" | "value" | "operand" | "rows" | "effect" | "refreshing"
+      type: "criteria" | "value" | "operand" | "rows" | "effect"
       payload: string | { [key: string]: string }[]
     }
   ): tableStateType {
@@ -110,8 +111,6 @@ export default function TableComponent({
         return { ...tstate, filterValue: action.payload as string }
       case "operand":
         return { ...tstate, filterOperand: action.payload as string }
-      case "refreshing":
-        return { ...tstate, isRefreshing: true }
       default:
         return tstate
     }
@@ -123,7 +122,6 @@ export default function TableComponent({
       filterValue: "",
       filterOperand: "",
       rows: [],
-      isRefreshing: false,
     }
   }
 
@@ -207,11 +205,10 @@ export default function TableComponent({
           >
             {!hideRefresh && (
               <Button
-                disabled={tableState.isRefreshing}
+                disabled={deactivateRefresh}
                 variant="default"
                 className="mb-4"
                 onClick={async () => {
-                  dispatch({ type: "refreshing", payload: "" })
                   await onRefresh?.()
                 }}
               >

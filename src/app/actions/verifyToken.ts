@@ -1,3 +1,4 @@
+import { defaultSession } from "@/lib/AppSessionOptions"
 import { fetchToken } from "@/lib/controllers/AccessTokenController"
 
 export default async function verifyToken(tokenText?: string) {
@@ -7,11 +8,11 @@ export default async function verifyToken(tokenText?: string) {
   const token = await fetchToken(tokenText ?? "")
 
   if (!token) {
-    return
+    return defaultSession.user
   }
 
   if (!token.is_active) {
-    return
+    return defaultSession.user
   }
 
   const user = {

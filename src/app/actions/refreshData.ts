@@ -7,11 +7,9 @@ import { revalidatePath } from "next/cache"
 export default async function refreshData({
   state,
   pc,
-  fromPath,
 }: {
   state?: string[]
   pc?: string[]
-  fromPath: string
 }) {
   const userLoggedIn = await getIsUserLoggedIn()
   const isAdmin = await getIsUserAdmin()
@@ -19,20 +17,29 @@ export default async function refreshData({
 
   if (!userLoggedIn) {
     return {
-      contacts: [],
-      totalContacts: 0,
+      success: false,
+      error: "User not logged in",
     }
   }
 
   if (!state && !pc && !isAdmin) {
     return {
-      contacts: [],
-      totalContacts: 0,
+      success: false,
+      error: "Unauthorized",
     }
   }
 
-  await bci.queryContacts(state, pc, () => {
-    revalidatePath("/dashboard")
-    revalidatePath(fromPath)
-  })
+  try {
+    await bci.queryContacts(state, pc)
+    return {
+      success: true,
+      error: "",
+    }
+  } catch (e) {
+    console.error(e)
+    return {
+      success: false,
+      error: (e as any).message,
+    }
+  }
 }

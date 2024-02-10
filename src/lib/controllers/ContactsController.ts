@@ -216,7 +216,7 @@ export const getAllStatesFromDB = async (): Promise<
       },
       {
         $group: {
-          _id: null,
+          _id: undefined,
           data: {
             $addToSet: "$fields.value",
           },
@@ -259,7 +259,7 @@ export const getAllPCsFromDB = async (): Promise<
       },
       {
         $group: {
-          _id: null,
+          _id: undefined,
           data: {
             $addToSet: "$fields.value",
           },

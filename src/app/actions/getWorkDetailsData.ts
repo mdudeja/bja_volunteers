@@ -17,7 +17,7 @@ export default async function getWorkDetailsData(
     }
   }
 
-  if (!state && !pc && !isAdmin) {
+  if (!state?.length && !pc?.length && !isAdmin) {
     return {
       workDetails: [],
       totalWorkDetails: 0,

@@ -9,23 +9,13 @@ import { AppContactType } from "@/lib/interfaces/AppContact"
 import Link from "next/link"
 import VolunteersComponent from "./VolunteersComponent"
 
-export default function DashboardVolunteersView({
-  contacts,
-}: {
-  contacts: AppContactType[]
-}) {
+export default function DashboardVolunteersView() {
   const router = useRouter()
 
   return (
     <div className="h-full flex flex-col place-items-center">
       <Suspense fallback={<Loading />}>
-        <VolunteersComponent
-          data={contacts}
-          tableHeaders={vol_table_headers}
-          rowsPerPage={10}
-          currentPage={1}
-          minified={true}
-        />
+        <VolunteersComponent rowsPerPage={10} currentPage={1} minified={true} />
       </Suspense>
       <div className="flex flex-row items-center justify-end self-end me-4 mt-1 mb-2 space-x-2">
         <Button variant="default" size="sm">

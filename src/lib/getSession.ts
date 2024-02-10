@@ -1,4 +1,4 @@
-import { sessionOptions } from "@/lib/AppSessionOptions"
+import { defaultSession, sessionOptions } from "@/lib/AppSessionOptions"
 import { SessionData } from "@/lib/interfaces/SessionData"
 import { getIronSession } from "iron-session"
 import { cookies } from "next/headers"

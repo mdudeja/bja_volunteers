@@ -3,45 +3,26 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable"
-import getVolunteerData from "../actions/getVolunteerData"
 import DashboardVolunteersView from "@/components/DashboardVolunteersView"
 import GenerateLinksComponent from "@/components/GenerateLinksComponent"
-import getExistingLinks from "@/app/actions/getExistingLinks"
 import { getSession } from "@/lib/getSession"
-import { SessionData } from "@/lib/interfaces/SessionData"
 import SummaryComponent from "@/components/SummaryComponent"
-import getWorkDetailsData from "@/app/actions/getWorkDetailsData"
 import WorkDetailsComponent from "@/components/WorkDetailsComponent"
-import { work_details_table_headers } from "@/lib/Constants"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { Metadata, ResolvingMetadata } from "next"
 import verifyToken from "@/app/actions/verifyToken"
-
-async function getContacts(user: SessionData["user"]) {
-  if (user?.type === "admin") {
-    return await getVolunteerData()
-  }
-
-  return await getVolunteerData(user?.access?.states, user?.access?.pcs)
-}
-
-async function getWorkDetails(user: SessionData["user"]) {
-  if (user?.type === "admin") {
-    return await getWorkDetailsData()
-  }
-
-  return await getWorkDetailsData(user?.access?.states, user?.access?.pcs)
-}
+import {
+  HydrationBoundary,
+  QueryClient,
+  dehydrate,
+} from "@tanstack/react-query"
+import { SessionData } from "@/lib/interfaces/SessionData"
 
 export default async function DashboardPage() {
+  const queryClient = new QueryClient()
   const session = await getSession()
-  const existingTokens =
-    session?.user?.type === "admin" ? await getExistingLinks() : []
-  const { contacts, totalContacts: _ } = await getContacts(session?.user)
-  const { workDetails, totalWorkDetails: __ } = await getWorkDetails(
-    session?.user
-  )
+  const sessionUser = session?.user as SessionData["user"] | undefined
 
   return (
     <div className="height-minus-topbar">
@@ -49,21 +30,23 @@ export default async function DashboardPage() {
         <ResizablePanel defaultSize={40}>
           <ResizablePanelGroup direction="horizontal">
             <ResizablePanel defaultSize={60}>
-              {session?.user?.type === "admin" && (
-                <GenerateLinksComponent data={existingTokens} minified={true} />
+              {sessionUser?.type === "admin" && (
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                  <GenerateLinksComponent minified={true} />
+                </HydrationBoundary>
               )}
-              {session?.user?.type !== "admin" && (
+              {sessionUser?.type !== "admin" && (
                 <div className="h-full flex flex-col space-y-2 pb-2">
                   <p className="text-lg mx-4 mt-2 underline underline-offset-4">
                     Work Details
                   </p>
-                  <WorkDetailsComponent
-                    data={workDetails}
-                    tableHeaders={work_details_table_headers}
-                    currentPage={1}
-                    rowsPerPage={10}
-                    minified={true}
-                  />
+                  <HydrationBoundary state={dehydrate(queryClient)}>
+                    <WorkDetailsComponent
+                      currentPage={1}
+                      rowsPerPage={10}
+                      minified={true}
+                    />
+                  </HydrationBoundary>
                   <Button className="self-end me-2">
                     <Link href="/work-details">View All</Link>
                   </Button>
@@ -72,7 +55,7 @@ export default async function DashboardPage() {
             </ResizablePanel>
             <ResizableHandle withHandle />
             <ResizablePanel defaultSize={40}>
-              <SummaryComponent data={contacts} minified={true} />
+              <SummaryComponent minified={true} />
             </ResizablePanel>
           </ResizablePanelGroup>
         </ResizablePanel>
@@ -81,7 +64,9 @@ export default async function DashboardPage() {
           <p className="text-lg mx-4 mt-2 underline underline-offset-4">
             Volunteers
           </p>
-          <DashboardVolunteersView contacts={contacts} />
+          <HydrationBoundary state={dehydrate(queryClient)}>
+            <DashboardVolunteersView />
+          </HydrationBoundary>
         </ResizablePanel>
       </ResizablePanelGroup>
     </div>

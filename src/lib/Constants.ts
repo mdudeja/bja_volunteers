@@ -19,6 +19,7 @@ export const work_details_table_headers = [
   "wa_name",
   "phone",
   "state",
+  "parliamentary_constituency",
   "houses_visited",
   "voters_enrolled",
   "enrollment_quiz_status",

@@ -8,25 +8,26 @@ import { useEffect, useState } from "react"
 
 export default function HeaderComponent() {
   const pathname = usePathname()
-  const { session, logout } = useSession()
+  const { session, logout, loginWithToken } = useSession()
   const [showLogout, setShowLogout] = useState(false)
   const router = useRouter()
-  const { loginWithToken } = useSession()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
 
   useEffect(() => {
     if (token) {
       loginWithToken({ token })
-      return
+      router.refresh()
     }
+  }, [token, loginWithToken, router])
 
+  useEffect(() => {
     if (session && session.isLoggedIn) {
       setShowLogout(true)
     } else {
       setShowLogout(false)
     }
-  }, [session, showLogout, token, loginWithToken])
+  }, [session, setShowLogout])
 
   return (
     <Menubar className="flex flex-row max-w-full">
