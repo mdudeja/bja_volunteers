@@ -36,21 +36,13 @@ export default async function DashboardPage() {
                 </HydrationBoundary>
               )}
               {sessionUser?.type !== "admin" && (
-                <div className="h-full flex flex-col space-y-2 pb-2">
-                  <p className="text-lg mx-4 mt-2 underline underline-offset-4">
-                    Work Details
-                  </p>
-                  <HydrationBoundary state={dehydrate(queryClient)}>
-                    <WorkDetailsComponent
-                      currentPage={1}
-                      rowsPerPage={10}
-                      minified={true}
-                    />
-                  </HydrationBoundary>
-                  <Button className="self-end me-2">
-                    <Link href="/work-details">View All</Link>
-                  </Button>
-                </div>
+                <HydrationBoundary state={dehydrate(queryClient)}>
+                  <WorkDetailsComponent
+                    currentPage={1}
+                    rowsPerPage={10}
+                    minified={true}
+                  />
+                </HydrationBoundary>
               )}
             </ResizablePanel>
             <ResizableHandle withHandle />

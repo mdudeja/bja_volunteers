@@ -11,6 +11,8 @@ import getWorkDetailsData from "@/app/actions/getWorkDetailsData"
 import { work_details_table_headers } from "@/lib/Constants"
 import { toast } from "sonner"
 import TableSkeletonComponent from "@/components/TableSkeleton"
+import { Button } from "@/components/ui/button"
+import Link from "next/link"
 
 export default function WorkDetailsComponent({
   rowsPerPage,
@@ -86,16 +88,26 @@ export default function WorkDetailsComponent({
   }
 
   return (
-    <ScrollArea className="h-5/6">
-      <TableComponent
-        data={data?.workDetails as AppContactWorkDetailsType[]}
-        tableHeaders={work_details_table_headers}
-        rowsPerPage={rowsPerPage}
-        currentPage={currentPage}
-        minified={minified}
-        onRefresh={() => mutationRefresh.mutate()}
-        deactivateRefresh={deactivateRefresh}
-      />
-    </ScrollArea>
+    <div className="h-full w-full flex flex-col">
+      <div className="flex flex-row w-full items-center justify-between">
+        <p className="text-lg mx-4 mt-2 underline underline-offset-4">
+          Work Details
+        </p>
+        <Button variant="default" size="sm" className="self-end me-4 mt-2">
+          <Link href="/work-details">View All</Link>
+        </Button>
+      </div>
+      <ScrollArea className="h-full">
+        <TableComponent
+          data={data?.workDetails as AppContactWorkDetailsType[]}
+          tableHeaders={work_details_table_headers}
+          rowsPerPage={rowsPerPage}
+          currentPage={currentPage}
+          minified={minified}
+          onRefresh={() => mutationRefresh.mutate()}
+          deactivateRefresh={deactivateRefresh}
+        />
+      </ScrollArea>
+    </div>
   )
 }
