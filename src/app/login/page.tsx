@@ -8,7 +8,7 @@ import { useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export default function LoginPage() {
-  const { login } = useSession()
+  const { login } = useSession(null)
   const [loadingToastId, setLoadingToastId] = useState<string | number | null>(
     null
   )

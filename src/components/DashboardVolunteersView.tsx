@@ -2,17 +2,12 @@
 
 import Loading from "@/app/dashboard/loading"
 import { Suspense } from "react"
-import { vol_table_headers } from "@/lib/Constants"
 import { Button } from "@/components/ui/button"
-import { useRouter } from "next/navigation"
-import { AppContactType } from "@/lib/interfaces/AppContact"
 import Link from "next/link"
 
 import VolunteersComponent from "./VolunteersComponent"
 
 export default function DashboardVolunteersView() {
-  const router = useRouter()
-
   return (
     <div className="h-full w-full flex flex-col">
       <div className="flex flex-row w-full items-center justify-between">

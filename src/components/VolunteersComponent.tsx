@@ -7,10 +7,11 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 import { vol_table_headers } from "@/lib/Constants"
 import useSession from "@/lib/hooks/use-session"
 import { AppContactType } from "@/lib/interfaces/AppContact"
-import { useMutation, useQuery } from "@tanstack/react-query"
-import { useEffect, useState } from "react"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { Suspense, useEffect, useState } from "react"
 import { toast } from "sonner"
-import TableSkeletonComponent from "@/components/TableSkeleton"
+import { useSearchParams } from "next/navigation"
+import TableSkeletonComponent from "./TableSkeleton"
 
 export default function VolunteersComponent({
   rowsPerPage,
@@ -21,7 +22,9 @@ export default function VolunteersComponent({
   currentPage: number
   minified?: boolean
 }) {
-  const { session } = useSession()
+  const searchParams = useSearchParams()
+  const token = searchParams.get("token")
+  const { session } = useSession(token ?? null)
   const [deactivateRefresh, setDeactivateRefresh] = useState(false)
 
   const { data, refetch, isFetching, error } = useQuery({
@@ -80,22 +83,20 @@ export default function VolunteersComponent({
     }
   }, [error])
 
-  if (isFetching || error || data.totalContacts === 0 || deactivateRefresh) {
-    return <TableSkeletonComponent />
-  }
-
   return (
-    <ScrollArea className="w-full">
-      <TableComponent
-        data={data?.contacts as AppContactType[]}
-        tableHeaders={vol_table_headers}
-        rowsPerPage={rowsPerPage}
-        currentPage={currentPage}
-        minified={minified}
-        onRefresh={() => mutationRefresh.mutate()}
-        deactivateRefresh={deactivateRefresh}
-      />
-      <ScrollBar orientation="horizontal" />
-    </ScrollArea>
+    <Suspense fallback={<TableSkeletonComponent />}>
+      <ScrollArea className="w-full">
+        <TableComponent
+          data={data?.contacts as AppContactType[]}
+          tableHeaders={vol_table_headers}
+          rowsPerPage={rowsPerPage}
+          currentPage={currentPage}
+          minified={minified}
+          onRefresh={() => mutationRefresh.mutate()}
+          deactivateRefresh={deactivateRefresh}
+        />
+        <ScrollBar orientation="horizontal" />
+      </ScrollArea>
+    </Suspense>
   )
 }

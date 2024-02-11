@@ -22,49 +22,46 @@ const sessionApiUrl = "/api/session"
 
 function doLogin(
   url: string,
-  { arg }: { arg: { username: string; password: string } }
+  { arg }: { arg: { username?: string; password?: string; token?: string } }
 ) {
-  return fetchJson<SessionData>(url, {
+  return fetchJson<SessionData>(sessionApiUrl, {
     method: "POST",
-    body: JSON.stringify({ username: arg.username, password: arg.password }),
-  })
-}
-
-function doLoginWithToken(url: string, { arg }: { arg: { token: string } }) {
-  return fetchJson<SessionData>(url, {
-    method: "POST",
-    body: JSON.stringify({ token: arg.token }),
+    body: JSON.stringify({
+      username: arg.username,
+      password: arg.password,
+      token: arg.token,
+    }),
   })
 }
 
 function doLogout(url: string) {
-  return fetchJson<SessionData>(url, {
+  return fetchJson<SessionData>(sessionApiUrl, {
     method: "DELETE",
   })
 }
 
-export default function useSession() {
+export default function useSession(token: string | null) {
   const { data: session, isLoading } = useSWR<SessionData>(
-    sessionApiUrl,
-    fetchJson<SessionData>,
+    `${sessionApiUrl}_${token}`,
+    () => fetchJson<SessionData>(sessionApiUrl),
     {
       fallbackData: defaultSession,
+      revalidateOnMount: true,
     }
   )
 
-  const { trigger: login } = useSWRMutation(sessionApiUrl, doLogin, {
-    revalidate: true,
-  })
-
-  const { trigger: logout } = useSWRMutation(sessionApiUrl, doLogout)
-
-  const { trigger: loginWithToken } = useSWRMutation(
-    sessionApiUrl,
-    doLoginWithToken,
+  const { trigger: login } = useSWRMutation(
+    `${sessionApiUrl}_${token}`,
+    doLogin,
     {
       revalidate: true,
     }
   )
 
-  return { session, login, logout, loginWithToken, isLoading }
+  const { trigger: logout } = useSWRMutation(
+    `${sessionApiUrl}_${token}`,
+    doLogout
+  )
+
+  return { session, login, logout, isLoading }
 }

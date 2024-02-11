@@ -76,13 +76,11 @@ export default async function RootLayout({
   await queryClient.prefetchQuery({
     queryKey: ["volunteerData"],
     queryFn: () => getContacts(sessionUser ?? undefined),
-    staleTime: sessionUser ? 1000 * 60 : 1000 * 1,
   })
 
   await queryClient.prefetchQuery({
     queryKey: ["workDetailsData"],
     queryFn: () => getWorkDetails(sessionUser ?? undefined),
-    staleTime: sessionUser ? 1000 * 60 : 1000 * 1,
   })
 
   if (sessionUser?.type === "admin") {

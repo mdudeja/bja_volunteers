@@ -165,7 +165,7 @@ export default function TableFilterComponent({
           ) : null}
         </div>
         {compoundedFilter.length ? (
-          <p className="text-xs text-green-500">{compoundedFilter}</p>
+          <p className="text-xs text-green-500 mt-1">{compoundedFilter}</p>
         ) : null}
       </div>
       <div className="flex flex-col justify-stretch">
@@ -175,7 +175,9 @@ export default function TableFilterComponent({
           className="w-full"
           placeholder="Search"
         />
-        <p className="text-xs text-gray-500">* to match all non-empty values</p>
+        <p className="text-xs text-gray-500 mt-1">
+          * to match all non-empty values
+        </p>
         <p className="text-xs text-gray-500">
           space [&quot; &quot;] to match all empty values
         </p>

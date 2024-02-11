@@ -9,11 +9,12 @@ import MultiSelectCombobox from "@/components/MultiSelectCombobox"
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner"
 import TableComponent from "./TableComponent"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { useMutation, useSuspenseQuery } from "@tanstack/react-query"
 import getExistingLinks from "@/app/actions/getExistingLinks"
 import Loading from "@/app/loading"
+import useSession from "@/lib/hooks/use-session"
 
 export default function GenerateLinksComponent({
   minified = false,
@@ -26,6 +27,7 @@ export default function GenerateLinksComponent({
   const [list, setList] = useState<string[]>([])
   const [selectedValues, setSelectedValues] = useState<string[]>([])
   const router = useRouter()
+  const { session } = useSession(null)
 
   const { data, refetch } = useSuspenseQuery({
     queryKey: ["existingLinks"],
@@ -33,17 +35,15 @@ export default function GenerateLinksComponent({
     initialData: [],
   })
 
-  const { data: dataStates } = useSuspenseQuery({
+  const { data: dataStates, refetch: refetchStates } = useSuspenseQuery({
     queryKey: ["statesList"],
     queryFn: () => getAllStates(),
-    gcTime: 1000 * 60 * 60,
     initialData: [],
   })
 
-  const { data: dataPCs } = useSuspenseQuery({
+  const { data: dataPCs, refetch: refetchPCs } = useSuspenseQuery({
     queryKey: ["pcsList"],
     queryFn: () => getAllPCs(),
-    gcTime: 1000 * 60 * 60,
     initialData: [],
   })
 
@@ -125,6 +125,14 @@ export default function GenerateLinksComponent({
       )
     }
   }, [generatingFor, dataStates, dataPCs])
+
+  useEffect(() => {
+    if (session?.user) {
+      refetch()
+      refetchStates()
+      refetchPCs()
+    }
+  }, [session?.user, refetch, refetchStates, refetchPCs])
 
   return (
     <Suspense fallback={<Loading />}>

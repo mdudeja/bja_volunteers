@@ -19,6 +19,7 @@ import { Button } from "./ui/button"
 import { RefreshCcw, XCircle, Delete, Copy } from "lucide-react"
 import { TAccessToken } from "@/lib/interfaces/AccessToken"
 import { toast } from "sonner"
+import TableSkeletonComponent from "./TableSkeleton"
 
 const numericHeaders = [
   "inserted_at",
@@ -98,7 +99,7 @@ export default function TableComponent({
     tstate: tableStateType,
     action: {
       type: "criteria" | "value" | "operand" | "rows" | "effect"
-      payload: string | { [key: string]: string }[]
+      payload: string | { [key: string]: string }[] | number | undefined
     }
   ): tableStateType {
     switch (action.type) {
@@ -184,7 +185,11 @@ export default function TableComponent({
       const filter = tableState.filterValue.trim().toLowerCase()
 
       if (filter.length === 0) {
-        return value === filter
+        return value === filter || value === undefined
+      }
+
+      if (filter === "*") {
+        return value?.length > 0
       }
 
       return value?.includes(filter)
@@ -207,17 +212,21 @@ export default function TableComponent({
             className="flex flex-col items-start md:flex-row md:items-center md:justify-between data-[hr='y']:md:justify-end"
           >
             {!hideRefresh && (
-              <Button
-                disabled={deactivateRefresh}
-                variant="default"
-                className="mb-4"
-                onClick={async () => {
-                  await onRefresh?.()
-                }}
-              >
-                <RefreshCcw size={16} className="me-2" />
-                Refresh Data
-              </Button>
+              <div className="flex flex-col mb-4">
+                <Button
+                  disabled={deactivateRefresh}
+                  variant="default"
+                  onClick={async () => {
+                    await onRefresh?.()
+                  }}
+                >
+                  <RefreshCcw size={16} className="me-2" />
+                  Refresh Data
+                </Button>
+                <p className="text-xs text-blue-500 text-center">
+                  Showing {tableState.rows.length} entries{" "}
+                </p>
+              </div>
             )}
             <div className="flex flex-row items-start justify-center space-x-2">
               <TableFilterComponent
@@ -312,6 +321,7 @@ export default function TableComponent({
           </TableBody>
         </Table>
       )}
+      {!data && <TableSkeletonComponent />}
       {!minified &&
         !tableState.filterCriteria.length &&
         !tableState.filterValue.length && (

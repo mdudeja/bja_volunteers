@@ -13,21 +13,22 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { MoreVertical } from "lucide-react"
 import Link from "next/link"
+import { useQueryClient } from "@tanstack/react-query"
 
 export default function HeaderComponent() {
   const pathname = usePathname()
-  const { session, logout, loginWithToken } = useSession()
-  const [showLogout, setShowLogout] = useState(false)
-  const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
+  const { session, logout, login } = useSession(token ?? null)
+  const [showLogout, setShowLogout] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     if (token) {
-      loginWithToken({ token })
+      login({ token })
       router.refresh()
     }
-  }, [token, loginWithToken, router])
+  }, [token, login, router])
 
   useEffect(() => {
     if (session && session.isLoggedIn) {
@@ -36,6 +37,12 @@ export default function HeaderComponent() {
       setShowLogout(false)
     }
   }, [session, setShowLogout])
+
+  useEffect(() => {
+    if (session) {
+      router.refresh()
+    }
+  }, [session, router])
 
   return (
     <Menubar className="flex flex-row max-w-full">

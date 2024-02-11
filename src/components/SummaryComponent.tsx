@@ -9,6 +9,7 @@ import useSession from "@/lib/hooks/use-session"
 import Loading from "@/app/loading"
 import { toast } from "sonner"
 import TableSkeletonComponent from "@/components/TableSkeleton"
+import { useSearchParams } from "next/navigation"
 
 type SummaryType = {
   total: number
@@ -68,7 +69,9 @@ function getSummaryFromData(data: AppContactType[]): SummaryType {
 }
 
 export default function SummaryComponent({ minified }: { minified: boolean }) {
-  const { session } = useSession()
+  const searchParams = useSearchParams()
+  const token = searchParams.get("token")
+  const { session } = useSession(token ?? null)
 
   const { data, refetch, isFetching, error } = useQuery({
     queryKey: ["volunteerData"],

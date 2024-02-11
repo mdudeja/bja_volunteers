@@ -9,7 +9,7 @@ export default async function VolunteersPage({
   const currentPage = searchParams.page ? parseInt(searchParams.page) : 1
 
   return (
-    <div className="flex flex-col me-4 my-4">
+    <div className="flex flex-col me-4 my-4 p-2">
       <WorkDetailsComponent
         rowsPerPage={rowsPerPage}
         currentPage={currentPage}

@@ -1,11 +1,13 @@
 "use client"
 
 import useSession from "@/lib/hooks/use-session"
-import { useRouter } from "next/navigation"
+import { useRouter, useSearchParams } from "next/navigation"
 import { useEffect } from "react"
 
 export default function Home() {
-  const { session } = useSession()
+  const searchParams = useSearchParams()
+  const token = searchParams.get("token")
+  const { session } = useSession(token ?? null)
   const router = useRouter()
 
   useEffect(() => {
